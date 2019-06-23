@@ -2,7 +2,16 @@
 	<div class="currencysWrap">
 		
 		<div class="welcomeMsg">{{ message }}</div>
-		<div class="curDate">Son Güncelleme : {{ currencyAllData[0].lastUpdateDate }}</div>
+		<section class="container">
+			<div class="curDate left-div">
+				Son Güncelleme : {{ currencyAllData[0].lastUpdateDate }}
+			</div>
+			<div class="search-wrapper right-div">
+				<input type="text" v-model="search" placeholder="Search title.."/>
+				<label>Search title:</label>
+			</div>
+		</section>
+
 		<div class="curTable">
 			<div class="curHead">
 				<ul>
@@ -15,14 +24,13 @@
 				</ul>
 			</div>
 			<div class="curBody">
-				<ul v-for="item in dataLenght">
-					<li class="curID">{{ i+1 }}</li>
-					<li>{{ currencyAllData[i].code }}<span class="curName">{{ currencyAllData[i].name }}</span></li>
-					<li>{{ currencyAllData[i].buyPrice.toFixed(4) }}</li>
-					<li>{{ currencyAllData[i].sellPrice.toFixed(4) }}</li>
-					<li>{{ currencyAllData[i].todayHighestSellPrice.toFixed(4) }}</li>					
-					<li>{{ currencyAllData[i].todayLowestSellPrice.toFixed(4) }}</li>	
-					<li class="curIncrease">{{ i++ }}</li>
+				<ul v-bind:key="index" v-for="(item, index) in filteredList">
+					<li class="curID">{{ index + 1 }}</li>
+					<li>{{ item.code }}<span class="curName">{{ item.name }}</span></li>
+					<li>{{ item.buyPrice.toFixed(4) }}</li>
+					<li>{{ item.sellPrice.toFixed(4) }}</li>
+					<li>{{ item.todayHighestSellPrice.toFixed(4) }}</li>
+					<li>{{ item.todayLowestSellPrice.toFixed(4) }}</li>
 				</ul>
 			</div>
 		</div>	    
@@ -38,7 +46,8 @@
 				currencyAllData : '',
 				dataLenght : '',
 				i : 0,
-				message : 'Canlı Borsa Bilgileri'
+				message : 'Canlı Borsa Bilgileri',
+				search: ''
 			}
 		},
 		methods : {
@@ -63,6 +72,14 @@
 		mounted() {
 			this.dataRequest();
 			this.dataRequestAuto();
+		},
+		computed: {
+			filteredList() {
+				return this.currencyAllData.filter(x => {
+					return x.name.toLowerCase().includes(this.search.toLowerCase()) ||
+							x.code.toLowerCase().includes(this.search.toLowerCase())
+				})
+			}
 		}
 	}
 
